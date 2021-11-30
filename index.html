@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Drawflow</title>
+    </head>
+    <body>
+        <script src="https://cdn.jsdelivr.net/gh/jerosoler/Drawflow/dist/drawflow.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js" integrity="sha256-KzZiKy0DWYsnwMF+X1DvQngQ2/FxF7MF3Ff72XcpuPs=" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="/src/drawflow.css">
+        <link rel="stylesheet" href="/docs/beautiful.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" integrity="sha256-h20CPZ0QyXlBuAw7A+KluUYx/3pK+c7lYEpqLTlxjYQ=" crossorigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+        <script src="https://unpkg.com/micromodal/dist/micromodal.min.js"></script>
+        <header>
+            <h2>DrawFlow</h2>
+        </header>
+        <div class="wrapper">
+            <div class="col">
+                <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="Number">
+                    <span>Number</span>
+                </div>
+                <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="Text">
+                    <span>Text</span>
+                </div>
+                <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="Add">
+                    <span>Add</span>
+                </div>
+                <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="Subtract">
+                    <span>Subtract</span>
+                </div>
+                <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="Multiply">
+                    <span>Multiply</span>
+                </div>
+                <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="Divide">
+                    <span>Divide</span>
+                </div>
+                <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="if_else">
+                    <span>if-else</span>
+                </div>
+                <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="For-basic">
+                    <span>For</span>
+                </div>
+            </div>
+            <div class="col-right">
+                <div class="menu">
+                    <ul>
+                        <li onclick="editor.changeModule('Home'); changeModule(event);" class="selected">Home</li>
+                        <li onclick="editor.changeModule('Other'); changeModule(event);">Other Module</li>
+                    </ul>
+                </div>
+                <div id="drawflow" ondrop="drop(event)" ondragover="allowDrop(event)">
+                    <div class="btn-export" onclick="Swal.fire({ title: 'Export', html: '<pre><code>'+JSON.stringify(editor.export(),null,4)+'</code></pre>'})">Export</div>
+                    <div class="btn-clear" onclick="editor.clearModuleSelected()">Clear</div>
+                    <div class="btn-lock">
+                        <i id="lock" class="fas fa-lock" onclick="editor.editor_mode='fixed'; changeMode('lock');"></i>
+                        <i id="unlock" class="fas fa-lock-open" onclick="editor.editor_mode='edit'; changeMode('unlock');" style="display: none;"></i>
+                    </div>
+                    <div class="bar-zoom">
+                        <i class="fas fa-search-minus" onclick="editor.zoom_out()"></i>
+                        <i class="fas fa-search" onclick="editor.zoom_reset()"></i>
+                        <i class="fas fa-search-plus" onclick="editor.zoom_in()"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            var id = document.getElementById("drawflow");
+            const editor = new Drawflow(id);
+            editor.rerout = true;
+            editor.rerout_fix_curvature = true;
+            editor.force_first_input = false;
+
+            editor.start();
+            
+            editor.on('nodeCreated', function(id){
+                console.log("Node Created" + id);
+            })
+
+            editor.on('nodeRemoved',function(id){
+                console.log("Node Removed" + id);
+            })
+
+            editor.on('nodeSelected',function(id){
+                console.log("Node Selected" + id);
+            })
+
+            editor.on('moduleCreated',function(name){
+                console.log("Module Created" + name);
+            })
+
+            editor.on('moduleCharged',function(name){
+                console.log("Module Charged" + name);
+            })
+
+            editor.on('connectionCreated', function(connection){
+                console.log(editor.getNodeFromId(connection.input_id).data);
+                var num1;
+                var num2;
+                var result;
+                var select='';
+                try {
+                    num1 = parseInt(editor.getNodeFromId(editor.getNodeFromId(connection.input_id).inputs.input_1.connections[0].node).data.number);
+                } catch (error) {
+                    num1 = 0;
+                    console.log(error + "num1");
+                }
+
+                try {
+                    num2 = parseInt(editor.getNodeFromId(editor.getNodeFromId(connection.input_id).inputs.input_2.connections[0].node).data.number);
+                }catch (error) {
+                    num2 = 0; 
+                    console.log(error + "num2");
+                }
+
+                switch(editor.getNodeFromId(connection.input_id).class){
+                    case 'Add': 
+                        editor.updateNodeDataFromId(connection.input_id,{'number':  num1 + num2 })
+                    break;
+                    case 'Subtract': 
+                        editor.updateNodeDataFromId(connection.input_id,{'number':  num1 - num2  })
+                    break;
+                    case 'Divide': 
+                        editor.updateNodeDataFromId(connection.input_id,{'number':  num1 / num2  })
+                    break;
+                    case 'Multiply': 
+                        editor.updateNodeDataFromId(connection.input_id,{'number':  num1 * num2  })
+                    break;
+                    case 'Multiply': 
+                        editor.updateNodeDataFromId(connection.input_id,{'number':  num1 * num2  })
+                    break;
+                    case 'if_else': 
+                        select = editor.getNodeFromId(connection.input_id).data.channel;
+                        console.log(editor.getNodeFromId(connection.input_id).data.channel);
+
+                        var result = 'nada';
+                        switch(select){
+                            case 'higherThan':
+                                if(num1 > num2){
+                                    result = editor.getNodeFromId(connection.input_id).data.casetrue
+                                }else{   
+                                    result = editor.getNodeFromId(connection.input_id).data.casefalse   
+                                }
+                            break;
+                            default:
+                        }
+                        editor.updateNodeDataFromId(connection.input_id,{'result': result})
+
+                    break;
+                    default:
+                }
+            })
+
+            editor.on('connectionRemoved',function(connection){
+                console.log("Connection Removed");
+                console.log(connection);
+            })
+
+            editor.on('mouseMove', function(position) {
+                //console.log('Position mouse x:' + position.x + ' y:'+ position.y);
+            })
+
+            editor.on('nodeMoved', function(id) {
+                console.log("Node moved " + id);
+            })
+
+            editor.on('zoom', function(zoom) {
+                console.log('Zoom level ' + zoom);
+            })
+
+            editor.on('translate', function(position) {
+                console.log('Translate x:' + position.x + ' y:'+ position.y);
+            })
+
+            editor.on('addReroute', function(id) {
+                console.log("Reroute added " + id);
+            })
+
+            editor.on('removeReroute', function(id) {
+                console.log("Reroute removed " + id);
+            })
+
+            var elements = document.getElementsByClassName('drag-drawFlow');
+            for(var i = 0 ; i < elements.length; i++){
+                elements[i].addEventListener('touchend', drop, false);
+                elements[i].addEventListener('touchmove', positionMobile, false);
+                elements[i].addEventListener('touchstart', drag, false);
+            }
+
+            var mobile_item_selec = '';
+            var mobile_last_move = null;
+
+            function positionMobile(ev){
+                mobile_last_move = ev;
+            }
+
+            function allowDrop(ev){
+                ev.preventDefault();
+            }
+
+            function drag(ev){
+                if(ev.type === "touchstart"){
+                    mobile_item_selec = ev.target.closest(".drag-drawflow").getAttribute('data-note');
+                }else{
+                    ev.dataTransfer.setData("node", ev.target.getAttribute('data-node'));
+                }
+            }
+
+            function drop(ev){
+                if(ev.type === "touchend"){
+                    var parentdrawflow = document.elementsFromPoint(mobile_last_move.touches[0].clientX, mobile_last_move.touches[0].clientY).closest("#drawflow");
+                    if (parentdrawflow != null){
+                        addNoteToDrawFlow(mobile_last_move.touches[0].clientX, mobile_last_move.touches[0].clientY);
+                    }
+                    mobile_item_selec = '';
+                }else{
+                    ev.preventDefault();
+                    var data = ev.dataTransfer.getData("node");
+                    addNoteToDrawFlow(data, ev.clientX, ev.clientY);
+                }
+            }
+            
+
+            function addNoteToDrawFlow(name, pos_x, pos_y){
+                if(editor.editor_mode === 'fixed'){
+                    return false;
+                }
+                pos_x = pos_x * ( editor.precanvas.clientWidth / (editor.precanvas.clientWidth * editor.zoom)) - (editor.precanvas.getBoundingClientRect().x * ( editor.precanvas.clientWidth / (editor.precanvas.clientWidth * editor.zoom)));
+                pos_y = pos_y * ( editor.precanvas.clientHeight / (editor.precanvas.clientHeight * editor.zoom)) - (editor.precanvas.getBoundingClientRect().y * ( editor.precanvas.clientHeight / (editor.precanvas.clientHeight * editor.zoom)));
+
+                switch(name){
+                    case 'Number':
+                        var Number = `
+                        <div>
+                            <div class="title-box">Number</div>
+                            <div class="box">
+                                <p>Enter a number</p>
+                                <input type="Number" df-number>   
+                            </div>
+                        </div>
+                        `;
+                        editor.addNode('Number', 0, 1, pos_x,pos_y, 'Number',{"number": 0},Number);
+                    break;
+                    case 'Text':
+                        var text = `
+                        <div>
+                            <div class="title-box">Text</div>
+                            <div class="box">
+                                <p>Enter a text</p>
+                                <input type="text" df-text>   
+                            </div>
+                        </div>
+                        `;
+                        editor.addNode('Text', 0, 1, pos_x,pos_y, 'Text',{"text":''},text);
+                    break;
+                    case 'Add':
+                        var Add = `
+                        <div>
+                            <div class="title-box">Add</div>
+                            <div class="box">
+                                <p>Result</p>
+                                <input type="number"  df-number readonly>   
+                            </div>
+                        </div>
+                        `;
+                        editor.addNode('Add', 2, 1, pos_x,pos_y, 'Add',{"number": 0},Add);
+                    break;
+                    case 'Subtract':
+                        var Subtract = `
+                        <div>
+                            <div class="title-box">Subtract</div>
+                            <div class="box">
+                                <p>Result</p>
+                                <input type="text" df-number readonly>   
+                            </div>
+                        </div>
+                        `;
+                        editor.addNode('Subtract', 2, 1, pos_x,pos_y, 'Subtract',{"number": 0},Subtract);
+                    break;
+                    case 'Multiply':
+                        var Multiply = `
+                        <div>
+                            <div class="title-box">Multiply</div>
+                            <div class="box">
+                                <p>Result</p>
+                                <input type="text" df-number readonly>   
+                            </div>
+                        </div>
+                        `;
+                        editor.addNode('Multiply', 2, 1, pos_x,pos_y, 'Multiply',{"number": 0},Multiply);
+                    break;
+                    case 'Divide':
+                        var Divide = `
+                        <div>
+                            <div class="title-box">Divide</div>
+                            <div class="box">
+                                <p>Result</p>
+                                <input type="text" df-number readonly>   
+                            </div>
+                        </div>
+                        `;
+                        editor.addNode('Divide', 2, 1, pos_x,pos_y, 'Divide',{"number": 0},Divide);
+                    break;
+                    case 'if_else':
+                        var if_else = `
+                        <div>
+                            <div class="title-box">If-else</div>
+                                <div class="box">
+                                    <select df-channel>
+                                        <option value="higherThan">></option>
+                                        <option value="smallerThan"><</option>
+                                        <option value="higherThanEqual">>=</option>
+                                        <option value="smallerThanEqual"><=</option>
+                                        <option value="equal">==</option>
+                                    </select>
+                                    <p>True:</p>
+                                    <input type="text" df-casetrue> 
+                                    <p>False:</p>
+                                    <input type="text" df-casefalse>
+                                    <p>Result:</p>
+                                    <input type="text" df-result readonly>
+                                </div>
+
+                        </div>
+                        `;
+                        editor.addNode('if_else', 2, 0, pos_x,pos_y, 'if_else',{"casetrue": '', "casefalse": '', "result": '', "channel": 'equal'},if_else);
+                    break;
+                    case 'For-basic':
+                        var forBasic=`
+                        <div>
+                            <div class="title-box">For</div>
+                            <div class="box">
+                                <p>Result:</p>
+                            </div>
+                        </div>
+                            `;
+                        editor.addNode('For-basic', 2, 0, pos_x,pos_y, 'For-basic',{},forBasic);
+
+                    break;
+                    default:
+                }
+            }
+
+            var transform = '';
+            function showpopup(e){
+                e.target.closest(".drawflow-node").style.zIndex = "9999";
+                e.target.children[0].style.display = "block";
+
+                transform = editor.precanvas.style.transform;
+                editor.precanvas.style.transform = '';
+                editor.precanvas.style.left = editor.canvas_x +'px';
+                editor.precanvas.style.top = editor.canvas_y +'px';
+                console.log(transform);
+
+                editor.editor_mode = "fixed";
+            }
+
+            function closemodal(e) {
+                e.target.closest(".drawflow-node").style.zIndex = "2";
+                e.target.parentElement.parentElement.style.display  ="none";
+                
+                editor.precanvas.style.transform = transform;
+                editor.precanvas.style.left = '0px';
+                editor.precanvas.style.top = '0px';
+                editor.editor_mode = "edit";
+            }
+
+            function changeModule(event) {
+                var all = document.querySelectorAll(".menu ul li");
+                    for (var i = 0; i < all.length; i++) {
+                        all[i].classList.remove('selected');
+                    }
+                event.target.classList.add('selected');
+            }
+
+
+            function changeMode(option) {
+                if(option == 'lock') {
+                    lock.style.display = 'none';
+                    unlock.style.display = 'block';
+                } else {
+                    lock.style.display = 'block';
+                    unlock.style.display = 'none';
+                }
+            }
+        </script>
+    </body>
+</html>
