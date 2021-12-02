@@ -96,62 +96,52 @@
                 console.log("Module Charged" + name);
             })
 
+            editor.on('nodeDataChanged',function(id){
+                var id2 = editor.getNodeFromId(id).outputs.output_1.connections[0].node;
+                var num1;
+                var num2;
+                var nodeClass;
+                var nodeID;
+                try {
+                    num1 = parseInt(editor.getNodeFromId(editor.getNodeFromId(id2).inputs.input_1.connections[0].node).data.number);
+                } catch (error) {
+                    num1 = 0;
+                }
+
+                try {
+                    num2 = parseInt(editor.getNodeFromId(editor.getNodeFromId(id2).inputs.input_2.connections[0].node).data.number);
+                } catch (error) {
+                    num2 = 0;
+                }
+                nodeClass = editor.getNodeFromId(id2).class;
+                nodeID = id2;
+
+                update(num1,num2,nodeID,nodeClass);
+                
+            })
+
             editor.on('connectionCreated', function(connection){
                 console.log(editor.getNodeFromId(connection.input_id).data);
                 var num1;
                 var num2;
                 var result;
-                var select='';
+                var nodeClass;
+                var nodeID;
                 try {
                     num1 = parseInt(editor.getNodeFromId(editor.getNodeFromId(connection.input_id).inputs.input_1.connections[0].node).data.number);
                 } catch (error) {
                     num1 = 0;
-                    console.log(error + "num1");
                 }
 
                 try {
                     num2 = parseInt(editor.getNodeFromId(editor.getNodeFromId(connection.input_id).inputs.input_2.connections[0].node).data.number);
                 }catch (error) {
                     num2 = 0; 
-                    console.log(error + "num2");
                 }
+                nodeClass = editor.getNodeFromId(connection.input_id).class;
+                nodeID = connection.input_id;
 
-                switch(editor.getNodeFromId(connection.input_id).class){
-                    case 'Add': 
-                        editor.updateNodeDataFromId(connection.input_id,{'number':  num1 + num2 })
-                    break;
-                    case 'Subtract': 
-                        editor.updateNodeDataFromId(connection.input_id,{'number':  num1 - num2  })
-                    break;
-                    case 'Divide': 
-                        editor.updateNodeDataFromId(connection.input_id,{'number':  num1 / num2  })
-                    break;
-                    case 'Multiply': 
-                        editor.updateNodeDataFromId(connection.input_id,{'number':  num1 * num2  })
-                    break;
-                    case 'Multiply': 
-                        editor.updateNodeDataFromId(connection.input_id,{'number':  num1 * num2  })
-                    break;
-                    case 'if_else': 
-                        select = editor.getNodeFromId(connection.input_id).data.channel;
-                        console.log(editor.getNodeFromId(connection.input_id).data.channel);
-
-                        var result = 'nada';
-                        switch(select){
-                            case 'higherThan':
-                                if(num1 > num2){
-                                    result = editor.getNodeFromId(connection.input_id).data.casetrue
-                                }else{   
-                                    result = editor.getNodeFromId(connection.input_id).data.casefalse   
-                                }
-                            break;
-                            default:
-                        }
-                        editor.updateNodeDataFromId(connection.input_id,{'result': result})
-
-                    break;
-                    default:
-                }
+                update(num1,num2,nodeID,nodeClass);
             })
 
             editor.on('connectionRemoved',function(connection){
@@ -192,6 +182,46 @@
 
             var mobile_item_selec = '';
             var mobile_last_move = null;
+
+            function update(num1,num2,nodeID,nodeClass){
+                var select= '';
+                switch(nodeClass){
+                    case 'Add': 
+                        editor.updateNodeDataFromId(nodeID,{'number':  num1 + num2 })
+                    break;
+                    case 'Subtract': 
+                        editor.updateNodeDataFromId(nodeID,{'number':  num1 - num2  })
+                    break;
+                    case 'Divide': 
+                        editor.updateNodeDataFromId(nodeID,{'number':  num1 / num2  })
+                    break;
+                    case 'Multiply': 
+                        editor.updateNodeDataFromId(nodeID,{'number':  num1 * num2  })
+                    break;
+                    case 'Multiply': 
+                        editor.updateNodeDataFromId(nodeID,{'number':  num1 * num2  })
+                    break;
+                    case 'if_else': 
+                        select = editor.getNodeFromId(nodeID).data.channel;
+                        console.log(editor.getNodeFromId(nodeID).data.channel);
+
+                        var result = 'nada';
+                        switch(select){
+                            case 'higherThan':
+                                if(num1 > num2){
+                                    result = editor.getNodeFromId(nodeID).data.casetrue
+                                }else{   
+                                    result = editor.getNodeFromId(nodeID).data.casefalse   
+                                }
+                            break;
+                            default:
+                        }
+                        editor.updateNodeDataFromId(nodeID,{'result': result})
+
+                    break;
+                    default:
+                }    
+            }
 
             function positionMobile(ev){
                 mobile_last_move = ev;
