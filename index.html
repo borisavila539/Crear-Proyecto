@@ -76,6 +76,7 @@
 
             editor.start();
             
+            //Events
             editor.on('nodeCreated', function(id){
                 console.log("Node Created" + id);
             })
@@ -97,7 +98,12 @@
             })
 
             editor.on('nodeDataChanged',function(id){
-                var id2 = editor.getNodeFromId(id).outputs.output_1.connections[0].node;
+                var id2;
+                try {
+                    id2 = editor.getNodeFromId(id).outputs.output_1.connections[0].node;
+                } catch (error) {
+                    
+                } 
                 var num1;
                 var num2;
                 var nodeClass;
@@ -113,10 +119,19 @@
                 } catch (error) {
                     num2 = 0;
                 }
-                nodeClass = editor.getNodeFromId(id2).class;
+                try {
+                    nodeClass = editor.getNodeFromId(id2).class;
+                } catch (error) {
+                    
+                }
+                
                 nodeID = id2;
 
-                update(num1,num2,nodeID,nodeClass);
+                try {
+                    update(num1,num2,nodeID,nodeClass);
+                } catch (error) {
+                    console.log('Error')
+                }
                 
             })
 
@@ -173,6 +188,8 @@
                 console.log("Reroute removed " + id);
             })
 
+            //DRAG EVENTS
+            //MOUSE AND TOUCH ACTIONS
             var elements = document.getElementsByClassName('drag-drawFlow');
             for(var i = 0 ; i < elements.length; i++){
                 elements[i].addEventListener('touchend', drop, false);
@@ -217,6 +234,19 @@
                             default:
                         }
                         editor.updateNodeDataFromId(nodeID,{'result': result})
+
+                    break;
+                    case 'For-basic':
+                        var result = 'Inicio\n';
+                        if( num1 < num2 ){
+                            for( var i=num1; i <= num2; i++){
+                               result+= i.toString();
+                               result+= '\n'
+                               
+                            }
+                        }
+                        result+='Fin'
+                        editor.updateNodeDataFromId(nodeID,{'text': result})
 
                     break;
                     default:
@@ -364,6 +394,7 @@
                             <div class="title-box">For</div>
                             <div class="box">
                                 <p>Result:</p>
+                                <textarea df-text></textarea>
                             </div>
                         </div>
                             `;
