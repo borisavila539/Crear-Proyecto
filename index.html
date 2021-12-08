@@ -5,6 +5,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <title>Drawflow</title>
+        <link rel="shortcut icon" href="img/favicon-code-title.png">
+
     </head>
     <body>
         <script src="https://cdn.jsdelivr.net/gh/jerosoler/Drawflow/dist/drawflow.min.js"></script>
@@ -15,31 +17,33 @@
         <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
         <script src="https://unpkg.com/micromodal/dist/micromodal.min.js"></script>
+        <script src="https://kit.fontawesome.com/yourcode.js" crossorigin="anonymous"></script>
         <header>
             <h2>DrawFlow</h2>
+            <div class="github-link"><a href="https://github.com/borisavila539/Crear-Proyecto.git" target="_blank"><i class="fab fa-github fa-3x"></i></a></div>
         </header>
         <div class="wrapper">
             <div class="col">
                 <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="Number">
-                    <span>Number</span>
+                    <i class="fas fa-sort-numeric-up-alt"></i><span> Number</span>
                 </div>
                 <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="Add">
-                    <span>Add</span>
+                    <i class="fas fa-plus"></i><span> Add</span>
                 </div>
                 <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="Subtract">
-                    <span>Subtract</span>
+                    <i class="fas fa-minus"></i><span> Subtract</span>
                 </div>
                 <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="Multiply">
-                    <span>Multiply</span>
+                    <i class="fas fa-star-of-life"></i><span> Multiply</span>
                 </div>
                 <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="Divide">
-                    <span>Divide</span>
+                    <i class="fas fa-divide"></i><span> Divide</span>
                 </div>
                 <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="if_else">
-                    <span>if-else</span>
+                    <i class="fas fa-code-branch"></i><span> if-else</span>
                 </div>
                 <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="For-basic">
-                    <span>For-basic</span>
+                    <i class="fas fa-sitemap"></i><span> For-basic</span>
                 </div>
             </div>
             <div class="col-right">
@@ -99,7 +103,7 @@
                 </div>
             </div>
             `;
-            editor.addNode('welcome',0,0,50,50,'welcome',{},welcome);
+            editor.addNode('welcome',0,0,25,25,'welcome',{},welcome);
             editor.addModule('Other');
             
             //Events
@@ -349,7 +353,7 @@
                     case 'Number':
                         var Number = `
                         <div>
-                            <div class="title-box">Number</div>
+                            <div class="title-box"><i class="fas fa-sort-numeric-up-alt"></i> Number</div>
                             <div class="box">
                                 <p>Enter a text</p>
                                 <input type="text" df-text>
@@ -363,7 +367,7 @@
                     case 'Add':
                         var Add = `
                         <div>
-                            <div class="title-box">Add</div>
+                            <div class="title-box"><i class="fas fa-plus"></i> Add</div>
                             <div class="box">
                                 <p>Result</p>
                                 <input type="number"  df-number readonly>   
@@ -375,7 +379,7 @@
                     case 'Subtract':
                         var Subtract = `
                         <div>
-                            <div class="title-box">Subtract</div>
+                            <div class="title-box"><i class="fas fa-minus"></i> Subtract</div>
                             <div class="box">
                                 <p>Result</p>
                                 <input type="text" df-number readonly>   
@@ -387,7 +391,7 @@
                     case 'Multiply':
                         var Multiply = `
                         <div>
-                            <div class="title-box">Multiply</div>
+                            <div class="title-box"><i class="fas fa-star-of-life"></i> Multiply</div>
                             <div class="box">
                                 <p>Result</p>
                                 <input type="text" df-number readonly>   
@@ -399,7 +403,7 @@
                     case 'Divide':
                         var Divide = `
                         <div>
-                            <div class="title-box">Divide</div>
+                            <div class="title-box"><i class="fas fa-divide"></i> Divide</div>
                             <div class="box">
                                 <p>Result</p>
                                 <input type="text" df-number readonly>   
@@ -411,7 +415,7 @@
                     case 'if_else':
                         var if_else = `
                         <div>
-                            <div class="title-box">If-else</div>
+                            <div class="title-box"><i class="fas fa-code-branch"></i> If-else</div>
                                 <div class="box">
                                     <select df-channel>
                                         <option value="higherThan">></option>
@@ -435,7 +439,7 @@
                     case 'For-basic':
                         var forBasic=`
                         <div>
-                            <div class="title-box">For</div>
+                            <div class="title-box"> <i class="fas fa-sitemap"></i> For-basic</div>
                             <div class="box">
                                 <p>Result:</p>
                                 <textarea df-text></textarea>
