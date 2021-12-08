@@ -23,9 +23,6 @@
                 <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="Number">
                     <span>Number</span>
                 </div>
-                <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="Text">
-                    <span>Text</span>
-                </div>
                 <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="Add">
                     <span>Add</span>
                 </div>
@@ -42,7 +39,7 @@
                     <span>if-else</span>
                 </div>
                 <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="For-basic">
-                    <span>For</span>
+                    <span>For-basic</span>
                 </div>
             </div>
             <div class="col-right">
@@ -75,6 +72,35 @@
             editor.force_first_input = false;
 
             editor.start();
+            var welcome = `
+            <div>
+                <div class="title-box">Welcome!!!</div>
+                <div class="box">
+                    <p>Simple flow library <b>demo</b>
+                    <a href="https://github.com/jerosoler/Drawflow" target="_blank">Drawflow</a> by <b>Jero Soler</b></p><br>
+                
+                    <p>Multiple input / outputs<br>
+                        Data sync nodes<br>
+                        Import / export<br>
+                        Modules support<br>
+                        Simple use<br>
+                        Type: Fixed or Edit<br>
+                        Events: view console<br>
+                        Pure Javascript<br>
+                    </p>
+                    <br>
+                    <p><b><u>Shortkeys:</u></b></p>
+                    <p>🎹 <b>Delete</b> for remove selected<br>
+                    💠 Mouse Left Click == Move<br>
+                    ❌ Mouse Right == Delete Option<br>
+                    🔍 Ctrl + Wheel == Zoom<br>
+                    📱 Mobile support<br>
+                    ...</p>
+                </div>
+            </div>
+            `;
+            editor.addNode('welcome',0,0,50,50,'welcome',{},welcome);
+            editor.addModule('Other');
             
             //Events
             editor.on('nodeCreated', function(id){
@@ -200,6 +226,7 @@
             var mobile_item_selec = '';
             var mobile_last_move = null;
 
+            //function to update data from created or modified nodes
             function update(num1,num2,nodeID,nodeClass){
                 var select= '';
                 switch(nodeClass){
@@ -222,10 +249,38 @@
                         select = editor.getNodeFromId(nodeID).data.channel;
                         console.log(editor.getNodeFromId(nodeID).data.channel);
 
-                        var result = 'nada';
+                        var result = 'no data found';
                         switch(select){
                             case 'higherThan':
                                 if(num1 > num2){
+                                    result = editor.getNodeFromId(nodeID).data.casetrue
+                                }else{   
+                                    result = editor.getNodeFromId(nodeID).data.casefalse   
+                                }
+                            break;
+                            case 'smallerThan':
+                            if(num1 < num2){
+                                    result = editor.getNodeFromId(nodeID).data.casetrue
+                                }else{   
+                                    result = editor.getNodeFromId(nodeID).data.casefalse   
+                                }
+                            break;
+                            case 'higherThanEqual':
+                            if(num1 >= num2){
+                                    result = editor.getNodeFromId(nodeID).data.casetrue
+                                }else{   
+                                    result = editor.getNodeFromId(nodeID).data.casefalse   
+                                }
+                            break;
+                            case 'smallerThanEqual':
+                            if(num1 <= num2){
+                                    result = editor.getNodeFromId(nodeID).data.casetrue
+                                }else{   
+                                    result = editor.getNodeFromId(nodeID).data.casefalse   
+                                }
+                            break;
+                            case 'equal':
+                            if(num1 == num2){
                                     result = editor.getNodeFromId(nodeID).data.casetrue
                                 }else{   
                                     result = editor.getNodeFromId(nodeID).data.casefalse   
@@ -242,7 +297,6 @@
                             for( var i=num1; i <= num2; i++){
                                result+= i.toString();
                                result+= '\n'
-                               
                             }
                         }
                         result+='Fin'
@@ -297,24 +351,14 @@
                         <div>
                             <div class="title-box">Number</div>
                             <div class="box">
+                                <p>Enter a text</p>
+                                <input type="text" df-text>
                                 <p>Enter a number</p>
                                 <input type="Number" df-number>   
                             </div>
                         </div>
                         `;
                         editor.addNode('Number', 0, 1, pos_x,pos_y, 'Number',{"number": 0},Number);
-                    break;
-                    case 'Text':
-                        var text = `
-                        <div>
-                            <div class="title-box">Text</div>
-                            <div class="box">
-                                <p>Enter a text</p>
-                                <input type="text" df-text>   
-                            </div>
-                        </div>
-                        `;
-                        editor.addNode('Text', 0, 1, pos_x,pos_y, 'Text',{"text":''},text);
                     break;
                     case 'Add':
                         var Add = `
